@@ -66,7 +66,7 @@ class Machine:
             self.config.div_latency,
         ) < 1:
             raise ValueError("execution latencies must be at least 1")
-        self.registers = list(registers or [float(index + 1) for index in range(self.config.register_count)])
+        self.registers = list(registers or [float(index) for index in range(self.config.register_count)])
         if len(self.registers) != self.config.register_count:
             raise ValueError("register initialization has the wrong number of values")
         self.register_tags: list[str | None] = [None] * self.config.register_count

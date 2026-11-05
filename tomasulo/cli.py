@@ -19,8 +19,20 @@ def _positive(value: str) -> int:
     return number
 
 
+def _prompt_positive(prompt: str) -> int:
+    while True:
+        value = input(prompt)
+        if not value.strip():
+            print("Invalid input.")
+            continue
+        try:
+            return _positive(value)
+        except (ValueError, argparse.ArgumentTypeError):
+            print("Invalid input.")
+
+
 def _interactive() -> tuple[list, MachineConfig]:
-    instruction_count = _positive(input("Number of instructions: "))
+    instruction_count = _prompt_positive("Number of instructions: ")
     print("Enter instructions one per line.")
     lines = []
     for instruction_number in range(1, instruction_count + 1):
@@ -29,14 +41,14 @@ def _interactive() -> tuple[list, MachineConfig]:
             raise ValueError(f"instruction {instruction_number} cannot be blank")
         lines.append(line)
     program = parse_program("\n".join(lines))
-    add = _positive(input("Number of add/sub reservation stations [2]: ") or "2")
-    mul = _positive(input("Number of mul/div reservation stations [2]: ") or "2")
-    add_units = _positive(input("Number of add/sub execution units [1]: ") or "1")
-    mul_units = _positive(input("Number of mul/div execution units [1]: ") or "1")
-    add_latency = _positive(input("Cycles for add [2]: ") or "2")
-    sub_latency = _positive(input("Cycles for sub [2]: ") or "2")
-    mul_latency = _positive(input("Cycles for mul [10]: ") or "10")
-    div_latency = _positive(input("Cycles for div [20]: ") or "20")
+    add = _prompt_positive("Number of add/sub reservation stations: ")
+    mul = _prompt_positive("Number of mul/div reservation stations: ")
+    add_units = _prompt_positive("Number of add/sub execution units: ")
+    mul_units = _prompt_positive("Number of mul/div execution units: ")
+    add_latency = _prompt_positive("Cycles for add: ")
+    sub_latency = _prompt_positive("Cycles for sub: ")
+    mul_latency = _prompt_positive("Cycles for mul: ")
+    div_latency = _prompt_positive("Cycles for div: ")
     return program, MachineConfig(
         add_stations=add,
         mul_stations=mul,
