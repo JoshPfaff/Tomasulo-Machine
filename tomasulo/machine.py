@@ -80,8 +80,8 @@ class Machine:
 
     def _make_stations(self) -> list[Station]:
         stations = []
-        stations.extend(Station(f"Add{i}", "add") for i in range(1, self.config.add_stations + 1))
-        stations.extend(Station(f"Mul{i}", "mul") for i in range(1, self.config.mul_stations + 1))
+        stations.extend(Station(f"Add/Sub{i}", "add") for i in range(1, self.config.add_stations + 1))
+        stations.extend(Station(f"Mul/Div{i}", "mul") for i in range(1, self.config.mul_stations + 1))
         return stations
 
     def _kind(self, op: Op) -> str:
