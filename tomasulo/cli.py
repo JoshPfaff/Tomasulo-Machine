@@ -1,8 +1,7 @@
 import argparse
-from pathlib import Path
 
 from .machine import Machine, MachineConfig
-from .parser import parse_program, read_program
+from .parser import parse_program
 
 
 SAMPLE = """\
@@ -63,7 +62,6 @@ def _interactive() -> tuple[list, MachineConfig]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Configurable Tomasulo algorithm simulator")
-    parser.add_argument("program", nargs="?", type=Path, help="instruction file; omit for interactive mode")
     parser.add_argument("--add-stations", type=_positive, default=2)
     parser.add_argument("--mul-stations", type=_positive, default=2)
     parser.add_argument("--add-units", type=_positive, default=1)
@@ -81,18 +79,6 @@ def main() -> None:
     args = build_parser().parse_args()
     if args.sample:
         program = parse_program(SAMPLE)
-        config = MachineConfig(
-            add_stations=args.add_stations,
-            mul_stations=args.mul_stations,
-            add_units=args.add_units,
-            mul_units=args.mul_units,
-            add_latency=args.add_latency,
-            sub_latency=args.sub_latency,
-            mul_latency=args.mul_latency,
-            div_latency=args.div_latency,
-        )
-    elif args.program:
-        program = read_program(args.program)
         config = MachineConfig(
             add_stations=args.add_stations,
             mul_stations=args.mul_stations,

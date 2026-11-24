@@ -1,5 +1,4 @@
 import re
-from pathlib import Path
 
 from .instructions import Instruction, Op
 
@@ -54,10 +53,3 @@ def parse_program(text: str) -> list[Instruction]:
     if not program:
         raise ValueError("program must contain at least one instruction")
     return program
-
-
-def read_program(path: Path) -> list[Instruction]:
-    try:
-        return parse_program(path.read_text(encoding="utf-8-sig"))
-    except OSError as error:
-        raise ValueError(f"could not read program file '{path}': {error}") from error

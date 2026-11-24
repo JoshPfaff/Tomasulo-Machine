@@ -13,18 +13,6 @@ Use the built-in sample:
 python main.py --sample --trace
 ```
 
-Run an instruction file:
-
-```text
-MUL R3, R1, R2
-ADD R4, R3, R1
-DIV R5, R4, R2
-```
-
-```powershell
-python main.py program.txt --add-stations 3 --mul-stations 2 --add-units 1 --mul-units 1 --add-latency 2 --sub-latency 2 --mul-latency 10 --div-latency 20
-```
-
 Run `python main.py` without arguments to enter the number of instructions,
 then enter each instruction one at a time, followed by the reservation station
 counts, execution-unit counts, and the add, subtract, multiply, and divide latencies. Execution-unit
