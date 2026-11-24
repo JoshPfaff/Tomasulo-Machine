@@ -39,6 +39,7 @@ def _interactive() -> tuple[list, MachineConfig]:
         if not line.strip():
             raise ValueError(f"instruction {instruction_number} cannot be blank")
         lines.append(line)
+    # Parse all instructions together so parser errors include their line number.
     program = parse_program("\n".join(lines))
     add = _prompt_positive("Number of add/sub reservation stations: ")
     mul = _prompt_positive("Number of mul/div reservation stations: ")
@@ -78,6 +79,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     if args.sample:
+        # The sample uses the same parser and configuration options as interactive input.
         program = parse_program(SAMPLE)
         config = MachineConfig(
             add_stations=args.add_stations,

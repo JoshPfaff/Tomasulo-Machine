@@ -17,6 +17,7 @@ def _register(token: str) -> int:
 
 
 def parse_instruction(line: str) -> Instruction:
+    # Accept common punctuation and strip comments before validating tokens.
     cleaned = line.split("#", 1)[0].replace(",", " ")
     cleaned = cleaned.replace("(", " ").replace(")", " ")
     parts = cleaned.split()
@@ -45,6 +46,7 @@ def parse_instruction(line: str) -> Instruction:
 def parse_program(text: str) -> list[Instruction]:
     program = []
     for line_number, line in enumerate(text.splitlines(), start=1):
+        # Blank lines and comment-only lines do not count as instructions.
         if line.split("#", 1)[0].strip():
             try:
                 program.append(parse_instruction(line))

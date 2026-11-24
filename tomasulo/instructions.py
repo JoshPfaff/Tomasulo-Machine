@@ -11,6 +11,7 @@ class Op(str, Enum):
 
 @dataclass
 class Instruction:
+    # Timing fields are filled in as the instruction moves through the machine.
     op: Op
     destination: int | None = None
     source_1: int | None = None

@@ -19,7 +19,9 @@ class MachineConfig:
 @dataclass
 class Operand:
     value: float = 0.0
+    # A tag identifies the reservation station that will produce this value.
     tag: str | None = None
+    # Broadcast values become usable on the following cycle.
     available_cycle: int = 0
 
     def ready(self, cycle: int) -> bool:
@@ -69,6 +71,7 @@ class Machine:
         self.registers = list(registers or [float(index) for index in range(self.config.register_count)])
         if len(self.registers) != self.config.register_count:
             raise ValueError("register initialization has the wrong number of values")
+        # Register tags implement Tomasulo register renaming and track pending producers.
         self.register_tags: list[str | None] = [None] * self.config.register_count
         self.stations = self._make_stations()
         self.next_instruction = 0
@@ -115,6 +118,7 @@ class Machine:
 
     def _execution_units_available(self, kind: str) -> bool:
         limit = self.config.add_units if kind == "add" else self.config.mul_units
+        # A station may be ready while all units of its operation class are occupied.
         active = sum(station.executing for station in self.stations if station.kind == kind)
         return active < limit
 
@@ -125,6 +129,7 @@ class Machine:
         station = self._free_station(self._kind(instruction.op))
         if station is None:
             return
+        # Capture operand values or producer tags when the instruction enters a station.
         station.busy = True
         station.instruction_index = self.next_instruction
         station.op = instruction.op
@@ -154,6 +159,7 @@ class Machine:
             station.remaining -= 1
             if station.remaining != 0:
                 continue
+            # Results are computed only after the configured execution latency elapses.
             if station.op == Op.ADD:
                 station.result = station.first.value + station.second.value
             elif station.op == Op.SUB:
@@ -169,10 +175,12 @@ class Machine:
         completed = next((station for station in self.stations if station.busy and station.executing and station.remaining == 0), None)
         if completed is None:
             return
+        # The common data bus broadcasts one completed result per cycle.
         instruction = self.program[completed.instruction_index]
         instruction.broadcast = self.cycle
         destination = instruction.destination
         if self.register_tags[destination] == completed.name:
+            # Only the newest producer may write the architectural register.
             self.registers[destination] = completed.result
             self.register_tags[destination] = None
         for station in self.stations:
@@ -191,6 +199,7 @@ class Machine:
         output = []
         while self.next_instruction < len(self.program) or any(station.busy for station in self.stations):
             self.cycle += 1
+            # This order models the cycle boundary: broadcast, execute, then issue.
             self._broadcast()
             self._execute()
             self._issue()
